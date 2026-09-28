@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roteirista">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0C0E">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Roteirista de Bolso</title>
+<style>
+:root{
+  --bg:#0B0C0E; --surface:#15171A; --surface-2:#1E2125; --surface-3:#272B30; --ink:#F4F4F2; --muted:#9A9C9F; --dim:#62656A;
+  --line:#24272B; --line-strong:#33373C;
+  --gold:#F5A623; --gold-ink:#1A1204; --gold-soft:rgba(245,166,35,.13);
+  --teal:#3FB3B3; --teal-deep:#1B7272; --teal-soft:rgba(63,179,179,.14);
+  --rec:#FF5A4E; --rec-soft:rgba(255,90,78,.14);
+  --ok:#7FD48A; --ok-soft:rgba(127,212,138,.13);
+  --warn:#F4D35E; --warn-soft:rgba(244,211,94,.12);
+  --scrim:rgba(0,0,0,.62);
+  --radius:22px; --radius-s:16px; --tabbar:66px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{height:100%;-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:340px;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 90% at 50% -10%,rgba(27,114,114,.40),rgba(27,114,114,.08) 55%,transparent 75%)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{touch-action:manipulation}
+[hidden]{display:none!important}
+.muted{color:var(--muted)} .dim{color:var(--dim)} .small{font-size:13px} .tiny{font-size:12px} .center{text-align:center}
+.num{font-variant-numeric:tabular-nums}
+main{position:relative;z-index:1;max-width:620px;margin:0 auto;
+  padding-top:calc(env(safe-area-inset-top, 0px) + 12px);
+  padding-bottom:calc(var(--tabbar) + env(safe-area-inset-bottom, 0px) + 34px);
+  padding-left:16px;padding-right:16px;display:flex;flex-direction:column;gap:16px}
+h1{font-size:26px;line-height:1.15;margin:0;font-weight:700;letter-spacing:-.02em}
+h2{font-size:18px;line-height:1.25;margin:0;font-weight:650;letter-spacing:-.01em}
+h3{font-size:15px;margin:0;font-weight:650}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.btn{appearance:none;border:0;font-weight:650;font-size:16px;border-radius:999px;padding:12px 18px;min-height:48px;
+  background:var(--surface-2);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;line-height:1.2}
+.btn.primary{background:var(--gold);color:var(--gold-ink)}
+.btn.teal{background:var(--teal-deep);color:#fff}
+.btn.danger{background:transparent;color:var(--rec);border:1px solid rgba(255,90,78,.4)}
+.btn.ghost{background:transparent;color:var(--gold);padding-left:6px;padding-right:6px}
+.btn.block{width:100%}
+.btn.small{min-height:40px;padding:8px 14px;font-size:15px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.icon-btn:focus-visible,.row-btn:focus-visible,.tabbar button:focus-visible,.mic:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.icon-btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:44px;height:44px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none}
+.linkish{appearance:none;border:0;background:none;padding:0;color:var(--gold);font-weight:600;text-align:left;cursor:pointer;text-decoration:none}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card.tight{padding:12px 14px}
+.card.warn{background:var(--warn-soft);border-color:rgba(244,211,94,.25)}
+.card.bad{background:var(--rec-soft);border-color:rgba(255,90,78,.3)}
+.list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.list>li+li{border-top:1px solid var(--line)}
+.row-btn{appearance:none;border:0;background:transparent;width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;min-height:64px;color:inherit}
+.rb-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.rb-main b{font-weight:600;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
+.rb-main span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{padding:22px 18px;text-align:center;border:1.5px dashed var(--line-strong);border-radius:var(--radius);color:var(--muted)}
+.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);max-width:100%;line-height:1.3;white-space:nowrap}
+.chip>span{overflow:hidden;text-overflow:ellipsis}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.bad{background:var(--rec-soft);color:var(--rec)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.gold{background:var(--gold-soft);color:var(--gold)} .chip.teal{background:var(--teal-soft);color:var(--teal)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none;background:var(--dim)}
+.dot.live{background:var(--gold);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* gravador */
+.recorder{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 16px 20px;text-align:center}
+.mic{appearance:none;border:0;width:148px;height:148px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 0 0 10px var(--gold-soft),0 12px 40px rgba(245,166,35,.25);transition:transform .15s}
+.mic:active{transform:scale(.96)}
+.mic svg{width:58px;height:58px}
+.rec-live{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.rec-time{font-size:44px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.rec-time .d{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--rec);margin-right:10px;vertical-align:middle;animation:pulse 1s infinite}
+.bars{display:flex;align-items:center;justify-content:center;gap:3px;height:56px;width:100%;max-width:320px}
+.bars i{flex:1;max-width:6px;background:var(--gold);border-radius:3px;height:6%;transition:height .08s}
+.rec-actions{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:4px}
+.round{appearance:none;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.round.big{width:84px;height:84px;background:var(--gold);color:var(--gold-ink)}
+.round.mid{width:60px;height:60px;background:var(--surface-2);color:var(--ink)}
+.round svg{width:30px;height:30px}
+.hint{font-size:14px;color:var(--muted);max-width:340px}
+.alt-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* progresso */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.steps li{display:flex;align-items:center;gap:12px;padding:8px 2px;color:var(--dim)}
+.steps li .ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;border:1.5px solid var(--line-strong);font-size:13px;font-weight:700}
+.steps li.done{color:var(--muted)} .steps li.done .ic{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff}
+.steps li.now{color:var(--ink);font-weight:600} .steps li.now .ic{border-color:var(--gold);color:var(--gold)}
+.steps li.now .ic::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--gold);animation:pulse 1.2s infinite}
+.steps li .t{margin-left:auto;font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+
+/* roteiro */
+.script{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px}
+.script h2{font-size:20px;text-align:center;background:var(--gold);color:var(--gold-ink);padding:10px 12px;border-radius:12px;margin-bottom:14px;line-height:1.25}
+.script p{margin:0 0 14px;font-size:17px;line-height:1.5}
+.script p:last-child{margin-bottom:0}
+.script b{color:#fff;font-weight:700}
+.script .ref{color:var(--muted);font-size:13px}
+.kv{display:flex;flex-wrap:wrap;gap:8px}
+.ref-card{display:flex;gap:12px;align-items:flex-start}
+.ref-card img{width:112px;height:63px;object-fit:cover;border-radius:10px;flex:none;background:var(--surface-2)}
+.ref-card .rb-main b{-webkit-line-clamp:3}
+details.more{border-top:1px solid var(--line);margin-top:10px;padding-top:8px}
+details.more summary{cursor:pointer;color:var(--gold);font-weight:600;font-size:14px;list-style:none;padding:4px 0}
+details.more summary::-webkit-details-marker{display:none}
+.hook-grid{display:flex;flex-direction:column;gap:8px;margin-top:8px;font-size:14.5px}
+.hook-grid div b{color:var(--muted);font-weight:600;display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+.quote{white-space:pre-wrap;background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--muted);max-height:260px;overflow:auto}
+.mapa li{padding:10px 14px;font-size:15px}
+.linkrow{display:flex;flex-direction:column;gap:6px}
+.linkrow a{color:var(--gold);text-decoration:none;word-break:break-word;font-size:14.5px}
+
+/* formulários */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;color:var(--muted);font-weight:600}
+.input,textarea.input,select.input{appearance:none;width:100%;background:var(--surface-2);border:1px solid var(--line-strong);border-radius:14px;padding:12px 14px;font-size:16px;color:var(--ink);min-height:48px}
+textarea.input{min-height:120px;resize:vertical;line-height:1.45}
+.input:focus{outline:2px solid var(--gold);outline-offset:0;border-color:transparent}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px}
+.switch input{width:48px;height:28px;appearance:none;background:var(--surface-3);border-radius:999px;position:relative;cursor:pointer;flex:none;transition:background .2s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch input:checked{background:var(--gold)} .switch input:checked::after{transform:translateX(20px)}
+ol.how{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:15px}
+ol.how code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;background:var(--surface-2);padding:1px 6px;border-radius:6px;word-break:break-all}
+.lig li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px}
+.lig .st{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:700;font-size:14px;background:var(--surface-2);color:var(--muted)}
+.lig .st.ok{background:var(--ok-soft);color:var(--ok)} .lig .st.bad{background:var(--rec-soft);color:var(--rec)}
+
+/* tabbar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(11,12,14,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar .in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);height:var(--tabbar)}
+.tabbar button{appearance:none;border:0;background:none;color:var(--dim);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:600;cursor:pointer;position:relative}
+.tabbar button svg{width:25px;height:25px}
+.tabbar button[aria-current="page"]{color:var(--gold)}
+.tabbar .badge{position:absolute;top:8px;left:calc(50% + 8px);min-width:17px;height:17px;border-radius:9px;background:var(--gold);color:var(--gold-ink);font-size:10.5px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+
+/* folha (sheet) e toast */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:620px;background:var(--surface);border-radius:26px 26px 0 0;border:1px solid var(--line);border-bottom:0;
+  padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 18px);max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line-strong);margin:0 auto 4px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tabbar) + env(safe-area-inset-bottom,0px) + 16px);z-index:60;
+  background:var(--surface-3);color:var(--ink);padding:12px 18px;border-radius:14px;font-weight:600;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:calc(100% - 32px);text-align:center}
+.back{appearance:none;border:0;background:none;color:var(--gold);font-weight:600;display:inline-flex;align-items:center;gap:4px;padding:8px 0;cursor:pointer;min-height:44px}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+<nav class="tabbar" aria-label="Seções"><div class="in" id="tabs"></div></nav>
+<div id="layer"></div>
+<script>
+'use strict';
+/* ============================================================================================
+   Roteirista de Bolso — PWA
+   Grava a ideia → sobe pro repositório privado (audios/ + inbox/) → o robô do GitHub Actions
+   transcreve, busca referências, escreve o roteiro, cria Doc e card → grava saida/<id>.json → o app mostra.
+   Nenhum dado pessoal neste código: token e repositório ficam só no aparelho.
+   ============================================================================================ */
+const APP_VERSION = '1.0';
+const APP_ID = 'roteirista';
+const REPO_PADRAO = 'Jhonatas124/roteirista-dados';
+const PREVIEW = /[?&]preview=1/.test(location.search);
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const TE = new TextEncoder(), TD = new TextDecoder();
+function b64(buf) { const u = buf instanceof Uint8Array ? buf : new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const pad = n => String(n).padStart(2, '0');
+const fmtTime = s => `${pad(Math.floor(s / 60))}:${pad(Math.floor(s % 60))}`;
+function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso); const hoje = new Date(); const ontem = new Date(Date.now() - 864e5);
+  const hm = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  if (d.toDateString() === hoje.toDateString()) return `hoje, ${hm}`;
+  if (d.toDateString() === ontem.toDateString()) return `ontem, ${hm}`;
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}, ${hm}`; }
+function fmtViews(n) { n = +n || 0; if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' mi'; if (n >= 1e3) return Math.round(n / 1e3) + ' mil'; return String(n); }
+function dur(a, b) { const s = Math.max(0, Math.round(((b ? new Date(b) : new Date()) - new Date(a)) / 1000)); return s < 60 ? `${s}s` : s < 3600 ? `${Math.floor(s / 60)}min ${pad(s % 60)}s` : `${Math.floor(s / 3600)}h${pad(Math.floor(s % 3600 / 60))}`; }
+function novoId() { const d = new Date(); return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}-${Math.random().toString(36).slice(2, 6)}`; }
+const DIAS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+function fmtPostar(iso) { if (!iso) return ''; const [y, m, d] = iso.split('-').map(Number); const dt = new Date(y, m - 1, d); return `${DIAS[dt.getDay()]}, ${pad(d)}/${pad(m)}`; }
+
+/* ---------------- ícones ---------------- */
+const I = {
+  mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.6 21 12 3.4 3.4l-.01 6.7L15 12 3.39 13.9z"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  back: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>'
+};
+
+/* ---------------- armazenamento local (IndexedDB) ---------------- */
+const DB = {
+  db: null,
+  open() { return this.db ? Promise.resolve(this.db) : new Promise((res, rej) => { const r = indexedDB.open('roteirista', 1);
+    r.onupgradeneeded = () => { const d = r.result; ['saidas', 'pendentes', 'kv'].forEach(n => d.objectStoreNames.contains(n) || d.createObjectStore(n)); };
+    r.onsuccess = () => { this.db = r.result; res(this.db); }; r.onerror = () => rej(r.error); }); },
+  async tx(store, mode, fn) { const d = await this.open(); return new Promise((res, rej) => { const t = d.transaction(store, mode); const s = t.objectStore(store); const out = fn(s); t.oncomplete = () => res(out && 'result' in out ? out.result : out); t.onerror = () => rej(t.error); }); },
+  get(store, k) { return this.tx(store, 'readonly', s => s.get(k)); },
+  put(store, k, v) { return this.tx(store, 'readwrite', s => s.put(v, k)); },
+  del(store, k) { return this.tx(store, 'readwrite', s => s.delete(k)); },
+  async all(store) { const d = await this.open(); return new Promise((res, rej) => { const t = d.transaction(store, 'readonly'); const s = t.objectStore(store); const out = []; const c = s.openCursor(); c.onsuccess = () => { const cur = c.result; if (cur) { out.push(cur.value); cur.continue(); } else res(out); }; c.onerror = () => rej(c.error); }); }
+};
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem('rb.' + k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } },
+  set(k, v) { try { localStorage.setItem('rb.' + k, JSON.stringify(v)); } catch (_) {} }
+};
+
+/* ---------------- GitHub ---------------- */
+const GH = {
+  get cfg() { return LS.get('cfg', { repo: REPO_PADRAO, token: '' }); },
+  ok() { const c = this.cfg; return !!(c.token && c.repo); },
+  async req(path, opts = {}) {
+    const c = this.cfg;
+    const headers = { 'Authorization': 'Bearer ' + c.token, 'Accept': opts.accept || 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    if (opts.body) headers['Content-Type'] = 'application/json';
+    const r = await fetch('https://api.github.com' + path, { method: opts.method || 'GET', headers, body: opts.body, cache: 'no-store' });
+    if (r.status === 401) throw Object.assign(new Error('A chave do GitHub não vale mais (ou foi colada errada).'), { code: 'auth' });
+    if (r.status === 403 && r.headers.get('x-ratelimit-remaining') !== '0') throw Object.assign(new Error('A chave do GitHub não tem permissão nesse repositório.'), { code: 'auth' });
+    return r;
+  },
+  base() { return '/repos/' + this.cfg.repo; },
+  async repoInfo() { const r = await this.req(this.base()); if (r.status === 404) throw Object.assign(new Error('Repositório não encontrado (ou a chave não enxerga ele).'), { code: 'notfound' }); if (!r.ok) throw new Error('GitHub ' + r.status); return r.json(); },
+  async list(dir) { const r = await this.req(`${this.base()}/contents/${dir}`); if (r.status === 404) return []; if (!r.ok) throw new Error('GitHub ' + r.status); const j = await r.json(); return Array.isArray(j) ? j : []; },
+  async raw(path) { const r = await this.req(`${this.base()}/contents/${encodeURI(path)}`, { accept: 'application/vnd.github.raw+json' }); if (r.status === 404) return null; if (!r.ok) throw new Error('GitHub ' + r.status); return new Uint8Array(await r.arrayBuffer()); },
+  async sha(path) { const r = await this.req(`${this.base()}/contents/${encodeURI(path)}`); if (!r.ok) return null; const j = await r.json(); return j.sha || null; },
+  async put(path, bytes, message, sha) {
+    const body = { message, content: b64(bytes) }; if (sha) body.sha = sha;
+    let r = await this.req(`${this.base()}/contents/${encodeURI(path)}`, { method: 'PUT', body: JSON.stringify(body) });
+    if ((r.status === 422 || r.status === 409) && !sha) { const s = await this.sha(path); if (s) return this.put(path, bytes, message, s); }
+    if (r.status === 409 && sha) { await sleep(800); const s = await this.sha(path); return this.put(path, bytes, message, s); }
+    if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (_) {} throw new Error(`GitHub ${r.status}${m ? ': ' + m : ''}`); }
+    return (await r.json()).content.sha;
+  },
+  async putJSON(path, obj, message) { return this.put(path, TE.encode(JSON.stringify(obj, null, 1)), message); }
+};
+
+/* ---------------- estado ---------------- */
+const S = { tab: LS.get('tab', 'gravar'), view: null, itens: new Map(), pend: new Map(), teste: null, config: null, online: navigator.onLine, sync: { at: 0, erro: '' } };
+const ETAPAS = [
+  ['fila', 'Na fila'], ['transcrevendo', 'Transcrevendo o áudio'], ['buscando', 'Buscando os vídeos mais vistos'],
+  ['lendo_hooks', 'Lendo os hooks (2 primeiros min)'], ['escrevendo', 'Escrevendo o roteiro'], ['entregando', 'Criando o Doc e o card'], ['pronto', 'Pronto']
+];
+const ROT = Object.fromEntries(ETAPAS);
+ROT.enviando = 'Enviando…'; ROT.erro = 'Deu erro';
+
+function tituloDe(it) { if (!it.titulo && it.pedido && it.pedido.refazer_de) { const o = S.itens.get(it.pedido.refazer_de); return 'Refazendo: ' + (o ? tituloDe(o) : 'roteiro'); } return it.titulo || it.titulo_provisorio || (it.entrada && it.entrada.tema) || (it.pedido && it.pedido.texto && it.pedido.texto.slice(0, 80)) || `Ideia de ${fmtDate(it.criado)}`; }
+function statusDe(it) { return it.status || 'fila'; }
+function ativo(it) { const s = statusDe(it); return s !== 'pronto' && s !== 'erro'; }
+function todos() {
+  const m = new Map(S.itens);
+  for (const p of S.pend.values()) if (!m.has(p.id)) m.set(p.id, { id: p.id, criado: p.pedido.criado, status: 'enviando', etapa: 'enviando', pedido: p.pedido, _pend: p });
+  return [...m.values()].sort((a, b) => (b.criado || '').localeCompare(a.criado || ''));
+}
+
+/* ---------------- envio (com fila offline) ---------------- */
+function extDe(mime) { mime = (mime || '').toLowerCase(); if (mime.includes('mp4') || mime.includes('m4a') || mime.includes('aac')) return 'm4a'; if (mime.includes('webm')) return 'webm'; if (mime.includes('ogg') || mime.includes('opus')) return 'ogg'; if (mime.includes('mpeg') || mime.includes('mp3')) return 'mp3'; if (mime.includes('wav')) return 'wav'; if (mime.includes('quicktime')) return 'mov'; return 'm4a'; }
+async function novaIdeia({ blob, mime, duracao, texto, origem, nomeArquivo }) {
+  const id = novoId();
+  const pedido = { app: APP_ID, v: 1, id, criado: new Date().toISOString(), origem, texto: (texto || '').trim(), aparelho: /iPhone/.test(navigator.userAgent) ? 'iPhone' : /Mac/.test(navigator.userAgent) ? 'Mac' : 'navegador' };
+  let audioBuf = null;
+  if (blob) {
+    let ext = extDe(mime || blob.type);
+    if (nomeArquivo && /\.(\w{2,4})$/.test(nomeArquivo)) ext = nomeArquivo.split('.').pop().toLowerCase();
+    pedido.audio = `audios/${id}.${ext}`; pedido.duracao_s = duracao ? Math.round(duracao) : undefined;
+    audioBuf = await blob.arrayBuffer();
+  }
+  const p = { id, pedido, audio: audioBuf, tentativas: 0 };
+  await DB.put('pendentes', id, p); S.pend.set(id, p);
+  render();
+  enviarPendentes();
+  return id;
+}
+let enviando = false;
+async function enviarPendentes() {
+  if (enviando || !GH.ok() || !navigator.onLine || PREVIEW) return;
+  enviando = true;
+  try {
+    for (const p of [...S.pend.values()]) {
+      try {
+        if (p.audio && !p.audioOk) { await GH.put(p.pedido.audio, new Uint8Array(p.audio), `Áudio da ideia ${p.id}`); p.audioOk = true; await DB.put('pendentes', p.id, p); }
+        await GH.putJSON(`inbox/${p.id}.json`, p.pedido, `Nova ideia ${p.id}`);
+        const it = { id: p.id, app: APP_ID, criado: p.pedido.criado, status: 'fila', etapa: 'fila', pedido: p.pedido, etapas: [{ etapa: 'fila', rotulo: 'Na fila', quando: new Date().toISOString() }], _local: true };
+        S.itens.set(p.id, it); await DB.put('saidas', p.id, { item: it, sha: '' });
+        await DB.del('pendentes', p.id); S.pend.delete(p.id);
+        toast('Ideia enviada. O roteiro fica pronto em alguns minutos.');
+      } catch (e) {
+        p.tentativas = (p.tentativas || 0) + 1; p.erro = e.message; await DB.put('pendentes', p.id, p);
+        if (e.code === 'auth') { toast(e.message); break; }
+      }
+    }
+  } finally { enviando = false; render(true); agendar(); }
+}
+async function reenviar(it, extra = {}) {
+  const pedido = { ...(it.pedido || {}), ...extra, tentativa: ((it.pedido || {}).tentativa || 0) + 1, reenviado: new Date().toISOString() };
+  delete pedido.audio_b64;
+  await GH.putJSON(`inbox/${it.id}.json`, pedido, `Tentar de novo ${it.id}`);
+  it.status = 'trabalhando'; it.etapa = 'fila'; delete it.erro; S.itens.set(it.id, it); render(); agendar();
+}
+async function refazer(it, instrucao) {
+  const id = novoId();
+  const pedido = { app: APP_ID, v: 1, id, criado: new Date().toISOString(), origem: 'refazer', refazer_de: it.id, instrucao: (instrucao || '').trim(), texto: '' };
+  const p = { id, pedido, audio: null, tentativas: 0 };
+  await DB.put('pendentes', id, p); S.pend.set(id, p); enviarPendentes();
+  return id;
+}
+
+/* ---------------- sincronização (lê saida/) ---------------- */
+let timer = null, syncing = false;
+function agendar() { clearTimeout(timer); const rapido = S.pend.size || todos().some(ativo); timer = setTimeout(sync, document.hidden ? 300000 : rapido ? 12000 : 90000); }
+async function sync(manual) {
+  if (syncing || !GH.ok() || PREVIEW) { agendar(); return; }
+  syncing = true;
+  let mudou = !!manual;
+  try {
+    enviarPendentes();
+    const files = await GH.list('saida');
+    const cache = new Map((await DB.all('saidas')).map(x => [x.item.id, x]));
+    for (const f of files) {
+      if (f.type !== 'file' || !/\.json$/.test(f.name)) continue;
+      if (f.name === '_teste.json') { if (LS.get('testeSha') !== f.sha) { const j = JSON.parse(TD.decode(await GH.raw(f.path))); S.teste = j; LS.set('teste', j); LS.set('testeSha', f.sha); mudou = true; } continue; }
+      const id = f.name.replace(/\.json$/, '');
+      const c = cache.get(id);
+      if (c && c.sha === f.sha) { if (!S.itens.has(id)) { S.itens.set(id, c.item); mudou = true; } continue; }
+      const raw = await GH.raw(f.path); if (!raw) continue;
+      const item = JSON.parse(TD.decode(raw));
+      const antes = S.itens.get(id);
+      S.itens.set(id, item); await DB.put('saidas', id, { item, sha: f.sha }); mudou = true;
+      if (antes && antes.status !== 'pronto' && item.status === 'pronto') { toast(`Roteiro pronto: ${tituloDe(item)}`); avisar(item); }
+    }
+    if (S.sync.erro) mudou = true;
+    S.sync = { at: Date.now(), erro: '' };
+  } catch (e) { const mudouErro = S.sync.erro !== e.message; S.sync = { at: S.sync.at, erro: e.message }; if (mudouErro) mudou = true; if (manual) toast(e.message); }
+  finally { syncing = false; if (mudou || manual) render(!manual); agendar(); }
+}
+async function avisar(item) {
+  try { if ('Notification' in window && Notification.permission === 'granted' && document.hidden) { const reg = await navigator.serviceWorker?.getRegistration(); reg?.showNotification('Roteiro pronto', { body: tituloDe(item), icon: 'icon-192.png', tag: item.id }); } } catch (_) {}
+}
+async function lerConfig() { try { const raw = await GH.raw('config.json'); S.config = raw ? JSON.parse(TD.decode(raw)) : {}; } catch (e) { S.config = S.config || {}; } return S.config; }
+
+/* ---------------- gravador ---------------- */
+const Rec = {
+  on: false, t0: 0, mr: null, stream: null, chunks: [], ctx: null, an: null, raf: 0, tick: 0, lock: null, mime: '',
+  pickMime() { if (!window.MediaRecorder) return ''; for (const m of ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg']) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (_) {} } return ''; },
+  async start() {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { toast('Este navegador não grava áudio. Use “Mandar arquivo”.'); return; }
+    try { this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { toast('Sem acesso ao microfone. Libere em Ajustes do iPhone › Safari › Microfone.'); return; }
+    this.mime = this.pickMime();
+    try { this.mr = new MediaRecorder(this.stream, this.mime ? { mimeType: this.mime, audioBitsPerSecond: 48000 } : undefined); }
+    catch (_) { this.mr = new MediaRecorder(this.stream); }
+    this.chunks = []; this.mr.ondataavailable = e => { if (e.data && e.data.size) this.chunks.push(e.data); };
+    this.mr.start(1000); this.on = true; this.t0 = Date.now();
+    try { this.lock = await navigator.wakeLock?.request('screen'); } catch (_) {}
+    try { const AC = window.AudioContext || window.webkitAudioContext; this.ctx = new AC(); const src = this.ctx.createMediaStreamSource(this.stream); this.an = this.ctx.createAnalyser(); this.an.fftSize = 256; src.connect(this.an); } catch (_) {}
+    render(); this.loop();
+    this.tick = setInterval(() => { const el = $('#recTime'); if (el) el.lastChild.textContent = fmtTime((Date.now() - this.t0) / 1000); if (Date.now() - this.t0 > 30 * 60 * 1000) this.stop(true); }, 250);
+  },
+  loop() {
+    const bars = document.querySelectorAll('#bars i');
+    if (this.an && bars.length) { const d = new Uint8Array(this.an.frequencyBinCount); this.an.getByteTimeDomainData(d); let pk = 0; for (const v of d) pk = Math.max(pk, Math.abs(v - 128)); const lv = Math.min(1, pk / 70);
+      const h = [...bars].map(b => parseFloat(b.dataset.h || '6')); h.shift(); h.push(6 + lv * 94); bars.forEach((b, i) => { b.dataset.h = h[i]; b.style.height = h[i] + '%'; }); }
+    if (this.on) this.raf = requestAnimationFrame(() => this.loop());
+  },
+  stop(enviar) {
+    if (!this.on) return;
+    const dur = (Date.now() - this.t0) / 1000;
+    this.on = false; clearInterval(this.tick); cancelAnimationFrame(this.raf);
+    const mr = this.mr, stream = this.stream;
+    mr.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      try { this.ctx && this.ctx.close(); } catch (_) {}
+      try { this.lock && this.lock.release(); } catch (_) {}
+      const blob = new Blob(this.chunks, { type: mr.mimeType || this.mime || 'audio/mp4' });
+      this.chunks = [];
+      if (enviar) { if (dur < 1.5 || blob.size < 1000) { toast('Áudio curto demais — segure mais um pouco.'); render(); return; } await novaIdeia({ blob, mime: blob.type, duracao: dur, origem: 'gravacao' }); }
+      render();
+    };
+    try { mr.state !== 'inactive' ? mr.stop() : mr.onstop(); } catch (_) { mr.onstop(); }
+    render();
+  }
+};
+
+/* ---------------- telas ---------------- */
+function render(fundo) {
+  renderTabs();
+  const app = $('#app');
+  const foco = document.activeElement;
+  if (fundo && foco && app.contains(foco) && /^(INPUT|TEXTAREA|SELECT)$/.test(foco.tagName)) return;
+  if (fundo && S.tab === 'ajustes' && !S.view) { const l = $('#ligList'); if (l) l.outerHTML = listaLigacoes(); return; }
+  const abertos = [...app.querySelectorAll('details')].map(d => d.open);
+  const y = window.scrollY;
+  desenhar(app);
+  const ds = app.querySelectorAll('details');
+  if (ds.length === abertos.length) ds.forEach((d, i) => { d.open = abertos[i]; });
+  if (fundo) window.scrollTo(0, y);
+}
+function desenhar(app) {
+  if (S.view && S.view.tipo === 'item') { app.innerHTML = telaItem(S.view.id); return; }
+  if (S.tab === 'roteiros') app.innerHTML = telaRoteiros();
+  else if (S.tab === 'ajustes') app.innerHTML = telaAjustes();
+  else app.innerHTML = telaGravar();
+}
+function renderTabs() {
+  const nAtivos = todos().filter(ativo).length;
+  const t = [['gravar', 'Gravar', I.mic], ['roteiros', 'Roteiros', I.list], ['ajustes', 'Ajustes', I.gear]];
+  $('#tabs').innerHTML = t.map(([k, n, ic]) => `<button data-tab="${k}" ${S.tab === k && !S.view ? 'aria-current="page"' : ''}>${ic}<span>${n}</span>${k === 'roteiros' && nAtivos ? `<span class="badge">${nAtivos}</span>` : ''}</button>`).join('');
+}
+function chipStatus(it) {
+  const s = statusDe(it);
+  if (s === 'pronto') return '<span class="chip ok">Pronto</span>';
+  if (s === 'erro') return '<span class="chip bad">Erro</span>';
+  if (s === 'enviando') return `<span class="chip warn">${navigator.onLine ? 'Enviando' : 'Sem internet'}</span>`;
+  return `<span class="chip gold"><span class="dot live"></span><span>${esc(ROT[it.etapa] || 'Na fila')}</span></span>`;
+}
+function linhaItem(it) {
+  const s = statusDe(it);
+  const sub = s === 'pronto' ? [it.trello && it.trello.data ? `postar ${fmtPostar(it.trello.data)}` : '', it.palavras ? `${it.palavras} palavras` : ''].filter(Boolean).join(' · ')
+    : s === 'erro' ? 'toque pra ver e tentar de novo' : s === 'enviando' ? (it._pend && it._pend.erro ? 'vai de novo quando tiver internet' : 'subindo pro GitHub…') : `${esc(ROT[it.etapa] || 'Na fila')} · ${dur(it.criado)}`;
+  return `<li><button class="row-btn" data-open="${esc(it.id)}"><div class="rb-main"><b>${esc(tituloDe(it))}</b><span class="muted small">${esc(fmtDate(it.criado))}${sub ? ' · ' + sub : ''}</span></div>${chipStatus(it)}</button></li>`;
+}
+function telaGravar() {
+  const it = todos();
+  const ativos = it.filter(ativo);
+  const recentes = it.slice(0, 4);
+  const cfgOk = GH.ok();
+  return `
+  <div class="page-head"><div><h1>Roteirista</h1><div class="muted small">Grave a ideia. O roteiro chega no Doc e no Trello.</div></div></div>
+  ${!cfgOk ? `<div class="card warn stack"><b>Falta ligar o app</b><span class="small">Cole a chave do GitHub em Ajustes — é a mesma dos seus outros apps.</span><button class="btn primary small" data-tab="ajustes">Ligar agora</button></div>` : ''}
+  <section class="card recorder">
+    ${Rec.on ? `
+      <div class="rec-live">
+        <div class="rec-time" id="recTime"><span class="d"></span>${fmtTime((Date.now() - Rec.t0) / 1000)}</div>
+        <div class="bars" id="bars">${'<i></i>'.repeat(34)}</div>
+        <div class="hint">Fale à vontade: tema, ângulo, link, número, história. Ele transcreve e monta o roteiro.</div>
+        <div class="rec-actions">
+          <button class="round mid" data-act="rec-cancel" aria-label="Descartar gravação">${I.trash}</button>
+          <button class="round big" data-act="rec-send" aria-label="Parar e enviar">${I.send}</button>
+        </div>
+        <div class="tiny dim">Mantenha a tela aberta enquanto grava.</div>
+      </div>` : `
+      <button class="mic" data-act="rec-start" aria-label="Gravar ideia">${I.mic}</button>
+      <div><h2>Toque pra gravar a ideia</h2><div class="hint" style="margin-top:4px">Quando terminar, toque na setinha. Ele busca os vídeos mais vistos dos últimos ${esc((S.config && S.config.meses_referencia) || 8)} meses, monta o hook Frankenstein e escreve o roteiro.</div></div>`}
+  </section>
+  ${Rec.on ? '' : `
+  <div class="alt-inputs">
+    <button class="btn" data-act="escrever">${I.pen}<span>Escrever</span></button>
+    <label class="btn" style="cursor:pointer">${I.file}<span>Mandar áudio</span><input type="file" accept="audio/*,.m4a,.mp3,.wav,.ogg,.opus,.aac,.mp4,.mov" id="fileIn" hidden></label>
+  </div>`}
+  ${ativos.length ? `<div class="sec-head"><h2>Em andamento</h2></div><ul class="list">${ativos.map(linhaItem).join('')}</ul>` : ''}
+  ${recentes.filter(x => !ativo(x)).length ? `<div class="sec-head"><h2>Últimos</h2><button class="linkish" data-tab="roteiros">Ver todos</button></div><ul class="list">${recentes.filter(x => !ativo(x)).slice(0, 3).map(linhaItem).join('')}</ul>` : ''}
+  ${!it.length && cfgOk ? `<div class="empty"><b>Nenhuma ideia ainda</b>A primeira que você gravar aparece aqui, com o passo a passo até o roteiro.</div>` : ''}
+  <p class="tiny dim center">${S.sync.erro ? '⚠︎ ' + esc(S.sync.erro) : S.sync.at ? 'Atualizado ' + fmtDate(new Date(S.sync.at).toISOString()) : ''}</p>`;
+}
+function telaRoteiros() {
+  const it = todos();
+  const ativos = it.filter(ativo), feitos = it.filter(x => !ativo(x));
+  return `
+  <div class="page-head"><h1>Roteiros</h1><button class="btn small" data-act="sync">Atualizar</button></div>
+  ${ativos.length ? `<div class="sec-head"><h2>Em andamento</h2></div><ul class="list">${ativos.map(linhaItem).join('')}</ul>` : ''}
+  ${feitos.length ? `<div class="sec-head"><h2>Prontos</h2><span class="muted small">${feitos.length}</span></div><ul class="list">${feitos.map(linhaItem).join('')}</ul>` : ''}
+  ${!it.length ? `<div class="empty"><b>Nada por aqui</b>Grave uma ideia na aba Gravar.</div>` : ''}`;
+}
+
+function mdRoteiro(md) {
+  const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+?)\*(?!\*)/g, '$1<i>$2</i>').replace(/⟨mantido da referência⟩/g, '<span class="ref">⟨mantido da referência⟩</span>');
+  const out = [];
+  for (const l of String(md || '').split('\n')) { const s = l.trim(); if (!s) continue; if (/^#\s/.test(s)) out.push(`<h2>${inl(s.replace(/^#\s+/, ''))}</h2>`); else if (/^#{2,}\s/.test(s)) out.push(`<p><b>${inl(s.replace(/^#+\s+/, ''))}</b></p>`); else out.push(`<p>${inl(s.replace(/^[-*]\s+/, ''))}</p>`); }
+  return out.join('');
+}
+function passos(it) {
+  const feitas = new Map(); (it.etapas || []).forEach(e => feitas.set(e.etapa, e.quando));
+  const idx = ETAPAS.findIndex(e => e[0] === it.etapa);
+  return `<ol class="steps">${ETAPAS.map(([k, n], i) => { const cls = i < idx || it.status === 'pronto' ? 'done' : i === idx ? 'now' : ''; return `<li class="${cls}"><span class="ic">${cls === 'done' ? '✓' : ''}</span><span>${esc(n)}</span>${feitas.get(k) ? `<span class="t">${new Date(feitas.get(k)).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>` : ''}</li>`; }).join('')}</ol>`;
+}
+function hookDet(h) {
+  const campos = [['gancho_3s', 'Gancho (3 s)'], ['dor', 'Dor'], ['reframe', 'Reframe'], ['promessa', 'Promessa'], ['loop', 'Loop'], ['prova', 'Prova'], ['apresentacao', 'Apresentação'], ['entrada_no_conteudo', 'Entrada no conteúdo'], ['por_que_funciona', 'Por que funciona'], ['modelar', 'O que modelar']];
+  return `<div class="hook-grid">${campos.filter(([k]) => h[k]).map(([k, n]) => `<div><b>${n}</b>${esc(h[k])}</div>`).join('')}${h.transcricao ? `<div><b>Fala dos primeiros minutos</b><div class="quote">${esc(h.transcricao)}</div></div>` : ''}</div>`;
+}
+function telaItem(id) {
+  const it = todos().find(x => x.id === id);
+  if (!it) return `<button class="back" data-act="voltar">${I.back}Voltar</button><div class="empty"><b>Não achei esse roteiro</b></div>`;
+  const s = statusDe(it);
+  const refs = it.referencias || [];
+  const trello = it.trello || null;
+  const parts = [`<button class="back" data-act="voltar">${I.back}Roteiros</button>`];
+  parts.push(`<div class="stack" style="gap:8px"><h1 style="font-size:23px">${esc(tituloDe(it))}</h1><div class="row">${chipStatus(it)}<span class="muted small">${esc(fmtDate(it.criado))}${s !== 'pronto' && s !== 'erro' && s !== 'enviando' ? ' · ' + dur(it.criado) : ''}</span></div></div>`);
+  if (s === 'enviando') parts.push(`<div class="card warn stack"><b>Ainda no aparelho</b><span class="small">${it._pend && it._pend.erro ? 'Última tentativa: ' + esc(it._pend.erro) + '. ' : ''}Vai sozinho quando tiver internet.</span><div class="row"><button class="btn small primary" data-act="enviar-agora">Enviar agora</button><button class="btn small danger" data-act="apagar-pend" data-id="${esc(it.id)}">Apagar</button></div></div>`);
+  if (s === 'erro') parts.push(`<div class="card bad stack"><b>Parou em: ${esc((it.etapas || []).slice(-2, -1)[0]?.rotulo || '—')}</b><span class="small">${esc(it.erro || 'erro desconhecido')}</span><button class="btn primary small" data-act="tentar" data-id="${esc(it.id)}">Tentar de novo</button></div>`);
+  if (s !== 'pronto' && s !== 'erro' && s !== 'enviando') parts.push(`<section class="card">${passos(it)}<p class="tiny dim" style="margin:8px 0 0">Leva de 3 a 8 minutos. Pode fechar o app — chega no Doc e no Trello do mesmo jeito.</p></section>`);
+  if (s === 'pronto') {
+    parts.push(`<div class="grid2">${it.doc_url ? `<a class="btn primary" href="${esc(it.doc_url)}" target="_blank" rel="noopener">Abrir Doc ${I.ext}</a>` : `<button class="btn" data-act="copiar" disabled>Sem Doc</button>`}${trello && trello.url ? `<a class="btn teal" href="${esc(trello.url)}" target="_blank" rel="noopener">Trello ${I.ext}</a>` : `<button class="btn" data-act="copiar-card" data-id="${esc(it.id)}">Copiar card</button>`}</div>`);
+    parts.push(`<div class="kv">${trello && trello.data ? `<span class="chip gold">📅 postar ${esc(fmtPostar(trello.data))}</span>` : ''}${trello && trello.numero ? `<span class="chip">card #${esc(trello.numero)}</span>` : ''}${it.palavras ? `<span class="chip">${esc(it.palavras)} palavras</span>` : ''}${it.duracao ? `<span class="chip">⏱ ${esc(it.duracao)}</span>` : ''}${it.palavra_chave ? `<span class="chip teal">“${esc(it.palavra_chave)}” ${esc(it.vezes_palavra_chave ?? '')}x</span>` : ''}</div>`);
+  }
+  if ((it.avisos || []).length) parts.push(`<div class="card warn stack" style="gap:6px"><b class="small">Avisos</b>${it.avisos.map(a => `<span class="small">• ${esc(a)}</span>`).join('')}</div>`);
+  if ((it.confirmar || []).length) parts.push(`<div class="card stack" style="gap:6px"><h3>Conferir antes de gravar</h3>${it.confirmar.map(a => `<span class="small">☐ ${esc(a)}</span>`).join('')}</div>`);
+  if (it.roteiro_md) parts.push(`<div class="sec-head"><h2>Roteiro</h2><button class="linkish" data-act="copiar-roteiro" data-id="${esc(it.id)}">Copiar</button></div><article class="script">${mdRoteiro(it.roteiro_md)}</article>`);
+  if ((it.mapa || []).length) parts.push(`<div class="sec-head"><h2>Hook Frankenstein</h2><span class="muted small">de onde veio cada pedaço</span></div><ul class="list mapa">${it.mapa.map(m => `<li>${esc(m)}</li>`).join('')}</ul>`);
+  if ((it.titulos || []).length) parts.push(`<div class="sec-head"><h2>Títulos</h2></div><ul class="list mapa">${it.titulos.map((t, i) => `<li>${i === 0 ? '<span class="chip gold" style="margin-right:6px">recomendado</span>' : ''}${esc(t)}</li>`).join('')}${it.capa ? `<li><span class="muted small">Capa:</span> ${esc(it.capa)}</li>` : ''}</ul>`);
+  if (refs.length) parts.push(`<div class="sec-head"><h2>Referências</h2><span class="muted small">${refs.length} vídeos · 2 primeiros min</span></div>` + refs.map((v, i) => `
+    <section class="card tight"><div class="ref-card">${v.thumb ? `<img src="${esc(v.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : ''}<div class="rb-main"><b>${i + 1}. ${esc(v.titulo)}</b><span class="muted small">${esc(v.canal)} · ${fmtViews(v.views)} views · ${esc(v.publicado || '')}${v.dele ? ' · link seu' : ''}</span><a class="linkish small" href="${esc(v.url)}" target="_blank" rel="noopener">Abrir no YouTube</a></div></div>
+    ${v.hook && Object.keys(v.hook).length ? `<details class="more"><summary>Ver o hook</summary>${hookDet(v.hook)}</details>` : `<p class="tiny dim" style="margin:8px 0 0">Hook não lido${v.hook_erro ? ': ' + esc(v.hook_erro.slice(0, 140)) : ''}</p>`}</section>`).join(''));
+  if ((it.fontes_citadas || []).length || (it.fontes_texto || []).length) parts.push(`<div class="sec-head"><h2>Fontes</h2></div><section class="card linkrow">${(it.fontes_citadas || []).map(f => `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo || f.url)}</a>`).join('')}${(it.fontes_texto || []).map(f => `<span class="small muted">${esc(f)}</span>`).join('')}</section>`);
+  if (it.entrada && it.entrada.transcricao) parts.push(`<div class="sec-head"><h2>Sua ideia</h2>${it.pedido && it.pedido.audio ? `<button class="linkish" data-act="ouvir" data-path="${esc(it.pedido.audio)}">Ouvir áudio</button>` : ''}</div><section class="card stack"><div class="quote" style="max-height:none;color:var(--ink)">${esc(it.entrada.transcricao)}</div>${(it.buscas || []).length ? `<details class="more"><summary>Buscas no YouTube</summary><div class="small muted" style="margin-top:6px">${it.buscas.map(esc).join('<br>')}</div></details>` : ''}<audio id="player" controls hidden style="width:100%"></audio></section>`);
+  else if (it.pedido && it.pedido.texto) parts.push(`<div class="sec-head"><h2>Sua ideia</h2></div><section class="card"><div class="quote" style="max-height:none;color:var(--ink)">${esc(it.pedido.texto)}</div></section>`);
+  if (s === 'pronto') parts.push(`<button class="btn block" data-act="refazer" data-id="${esc(it.id)}">Refazer este roteiro</button><p class="tiny dim center" style="margin:0">Refazer cria um Doc novo e atualiza o mesmo card do Trello.${it.escritor ? ' · escrito por ' + esc(it.escritor) : ''}</p>`);
+  return parts.join('');
+}
+
+function segredoDoc() { if (S.config && S.config.doc_segredo) return S.config.doc_segredo; let s = LS.get('docSegredo', ''); if (!s) { const a = crypto.getRandomValues(new Uint8Array(18)); s = [...a].map(x => x.toString(16).padStart(2, '0')).join(''); LS.set('docSegredo', s); } return s; }
+function codigoAppsScript() {
+  return `// Roteirista de Bolso — cria o Google Doc do roteiro na pasta RoteirosYT.
+const SEGREDO = '${segredoDoc()}';
+const PASTA_ID = '1sbMtSWZnhVwqLLuvCTW4lKBtuEoJYuWe';
+
+function doPost(e) {
+  try {
+    const b = JSON.parse(e.postData.contents);
+    if (b.segredo !== SEGREDO) return saida({ ok: false, erro: 'segredo errado' });
+    const pasta = DriveApp.getFolderById(PASTA_ID);
+    if (b.acao === 'teste') return saida({ ok: true, pasta: pasta.getName(), conta: Session.getEffectiveUser().getEmail() });
+    const id = criarDoc(b.titulo || 'Roteiro', b.html || '');
+    DriveApp.getFileById(id).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return saida({ ok: true, id: id, url: 'https://docs.google.com/document/d/' + id + '/edit' });
+  } catch (err) {
+    return saida({ ok: false, erro: String(err) });
+  }
+}
+
+function doGet() { return saida({ ok: true, app: 'Roteirista de Bolso — Google Doc' }); }
+
+function criarDoc(titulo, html) {
+  const limite = 'roteirista' + Date.now();
+  const meta = { name: titulo, mimeType: 'application/vnd.google-apps.document', parents: [PASTA_ID] };
+  const corpo = '--' + limite + '\\r\\nContent-Type: application/json; charset=UTF-8\\r\\n\\r\\n' + JSON.stringify(meta) +
+    '\\r\\n--' + limite + '\\r\\nContent-Type: text/html; charset=UTF-8\\r\\n\\r\\n' + html + '\\r\\n--' + limite + '--';
+  const r = UrlFetchApp.fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'post', contentType: 'multipart/related; boundary=' + limite, payload: Utilities.newBlob(corpo).getBytes(),
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true
+  });
+  if (r.getResponseCode() >= 300) throw new Error('Drive ' + r.getResponseCode() + ': ' + r.getContentText().slice(0, 300));
+  return JSON.parse(r.getContentText()).id;
+}
+
+function saida(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+
+// Rode 1 vez no editor (Executar) pra autorizar o Drive.
+function autorizar() {
+  Logger.log(DriveApp.getFolderById(PASTA_ID).getName());
+  UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/about?fields=user', { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } });
+}
+`;
+}
+const LIGACOES = [
+  ['gemini', 'Google Gemini', 'transcreve o áudio e lê os hooks', 'GEMINI_API_KEY'],
+  ['youtube', 'YouTube', 'acha os vídeos mais vistos', 'YOUTUBE_API_KEY (opcional)'],
+  ['claude', 'Claude (Anthropic)', 'escreve o roteiro — opcional, sem ele o Gemini Pro escreve', 'ANTHROPIC_API_KEY'],
+  ['trello', 'Trello', 'card em “📹 Para gravar”', 'TRELLO_KEY + TRELLO_TOKEN'],
+  ['doc', 'Google Doc', 'Doc na pasta RoteirosYT', 'Apps Script (abaixo)']
+];
+function listaLigacoes() {
+  const t = S.teste || LS.get('teste', null);
+  const r = (t && t.resultado) || {};
+  return `<div id="ligList" class="stack" style="gap:8px"><ul class="list lig">${LIGACOES.map(([k, n, d, sec]) => { const x = r[k]; const cls = x ? (x.ok ? 'ok' : 'bad') : ''; return `<li><span class="st ${cls}">${x ? (x.ok ? '✓' : '!') : '?'}</span><div class="rb-main"><b>${esc(n)}</b><span class="small muted" style="white-space:normal">${esc(x ? x.info : d)}</span><span class="tiny dim">${esc(sec)}</span></div></li>`; }).join('')}</ul>
+  <p class="tiny dim" style="margin:0">${t ? 'Último teste: ' + esc(fmtDate(t.quando)) + '.' : 'Ainda não testado.'} O teste roda no GitHub (~1 min).</p></div>`;
+}
+function telaAjustes() {
+  const c = GH.cfg;
+  const conf = S.config || {};
+  const repoUrl = `https://github.com/${esc(c.repo || REPO_PADRAO)}`;
+  return `
+  <div class="page-head"><h1>Ajustes</h1></div>
+  <section class="card stack">
+    <h2>Conexão com o GitHub</h2>
+    <div class="field"><label for="fRepo">Repositório privado</label><input class="input" id="fRepo" value="${esc(c.repo || REPO_PADRAO)}" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+    <div class="field"><label for="fTok">Chave de acesso (a mesma dos outros apps)</label><input class="input" id="fTok" type="password" value="${esc(c.token || '')}" placeholder="github_pat_…" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off"></div>
+    <button class="btn primary block" data-act="salvar-gh">Salvar e conectar</button>
+    ${GH.ok() ? `<span class="small ${S.sync.erro ? '' : 'muted'}">${S.sync.erro ? '⚠︎ ' + esc(S.sync.erro) : '✓ Conectado'}</span>` : ''}
+  </section>
+
+  <div class="sec-head"><h2>Ligações do robô</h2><button class="btn small" data-act="testar" ${GH.ok() ? '' : 'disabled'}>Testar agora</button></div>
+  ${listaLigacoes()}
+
+  <details class="card"><summary class="linkish">Como colocar as chaves (no Mac)</summary>
+    <ol class="how" style="margin-top:12px">
+      <li>Abra <a class="linkish" href="${repoUrl}/settings/secrets/actions" target="_blank" rel="noopener">Segredos do repositório</a> › <b>New repository secret</b>. Nome exatamente como abaixo, valor = a chave.</li>
+      <li><code>GEMINI_API_KEY</code> — <a class="linkish" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> › Create API key.</li>
+      <li>YouTube — no <a class="linkish" href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud</a>, no MESMO projeto da chave do Gemini, ligue a <b>YouTube Data API v3</b> (Enable). Aí a mesma chave serve. Se preferir outra: <code>YOUTUBE_API_KEY</code>.</li>
+      <li><code>ANTHROPIC_API_KEY</code> — <a class="linkish" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a> › Create Key (precisa de crédito em Billing; ponha um limite mensal).</li>
+      <li><code>TRELLO_KEY</code> e <code>TRELLO_TOKEN</code> — <a class="linkish" href="https://trello.com/power-ups/admin" target="_blank" rel="noopener">trello.com/power-ups/admin</a> › New › crie “Roteirista” › aba API key › Generate. Na mesma página, clique no link <b>Token</b> › Allow e copie.</li>
+      <li>Volte aqui e toque em <b>Testar agora</b>.</li>
+    </ol>
+  </details>
+
+  <details class="card"${conf.doc_url ? '' : ' open'}><summary class="linkish">Google Doc (Apps Script) ${conf.doc_url ? '· ligado ✓' : ''}</summary>
+    <ol class="how" style="margin-top:12px">
+      <li>No Mac, logado na conta <b>jhonatasoficialbr</b> (a dona da pasta RoteirosYT), abra <a class="linkish" href="https://script.google.com/create" target="_blank" rel="noopener">script.google.com/create</a>.</li>
+      <li>Apague o que tiver lá e cole o código: <button class="btn small" data-act="copiar-gs">Copiar código</button></li>
+      <li>Salve (⌘S). No menu de funções escolha <b>autorizar</b> › Executar › Permitir.</li>
+      <li><b>Implantar</b> › Nova implantação › engrenagem › <b>App da Web</b> › Executar como: <b>Eu</b> · Quem pode acessar: <b>Qualquer pessoa</b> › Implantar › copie a URL.</li>
+      <li>Cole aqui:</li>
+    </ol>
+    <div class="field" style="margin-top:10px"><input class="input" id="fDoc" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(conf.doc_url || '')}" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+    <button class="btn primary block" style="margin-top:10px" data-act="salvar-doc" ${GH.ok() ? '' : 'disabled'}>Salvar URL do Doc</button>
+  </details>
+
+  <section class="card stack">
+    <h2>Como ele pesquisa</h2>
+    <div class="grid2">
+      <div class="field"><label for="fMeses">Meses pra trás</label><select class="input" id="fMeses">${[3, 6, 8, 12, 18].map(n => `<option ${+(conf.meses_referencia || 8) === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+      <div class="field"><label for="fQtd">Referências</label><select class="input" id="fQtd">${[3, 4, 5, 6, 8].map(n => `<option ${+(conf.qtd_referencias || 5) === n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+    </div>
+    <div class="field"><label for="fSeg">Tamanho do hook lido</label><select class="input" id="fSeg">${[[60, '1 minuto'], [90, '1min30'], [120, '2 minutos'], [180, '3 minutos']].map(([n, l]) => `<option value="${n}" ${+(conf.segundos_hook || 120) === n ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+    <label class="switch"><span><b style="font-weight:600">Data livre no Trello</b><br><span class="small muted">Se já tem vídeo marcado pra quarta, o novo vai pra sexta</span></span><input type="checkbox" id="fLivre" ${conf.data_livre === false ? '' : 'checked'}></label>
+    <button class="btn block" data-act="salvar-pref" ${GH.ok() ? '' : 'disabled'}>Salvar preferências</button>
+  </section>
+
+  <section class="card stack">
+    <div class="row between"><span>Avisar quando ficar pronto</span><button class="btn small" data-act="notif">${'Notification' in window && Notification.permission === 'granted' ? 'Ligado ✓' : 'Ligar'}</button></div>
+    <div class="row between"><span>Ver o robô trabalhando</span><a class="btn small" href="${repoUrl}/actions" target="_blank" rel="noopener">GitHub ${I.ext}</a></div>
+    <div class="row between"><span>Versão ${APP_VERSION}</span><button class="btn small" data-act="update">Procurar atualização</button></div>
+  </section>
+  <p class="tiny dim center">Roteirista de Bolso · a chave fica só neste aparelho.</p>`;
+}
+
+/* ---------------- folhas (sheets) ---------------- */
+function sheet(html) { $('#layer').innerHTML = `<div class="scrim" data-act="fechar"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`; }
+function fecharSheet() { $('#layer').innerHTML = ''; }
+function sheetEscrever() {
+  sheet(`<h2>Escrever ideia</h2><div class="field"><label for="tIdeia">Tema, ângulo ou link de vídeo</label><textarea class="input" id="tIdeia" placeholder="Ex.: vídeo mostrando como fazer vídeo de produto com o Veo pra vender no TikTok Shop sem aparecer…"></textarea></div>
+  <button class="btn primary block" data-act="enviar-texto">Enviar pro roteirista</button><button class="btn block" data-act="fechar">Cancelar</button>`);
+  setTimeout(() => $('#tIdeia')?.focus(), 250);
+}
+function sheetRefazer(id) {
+  sheet(`<h2>Refazer roteiro</h2><div class="field"><label for="tRef">O que mudar? (opcional)</label><textarea class="input" id="tRef" placeholder="Ex.: hook mais agressivo, mais curto, trocar o jabá de lugar…"></textarea></div>
+  <p class="small muted" style="margin:0">Usa a mesma transcrição e as mesmas referências. Sai um Doc novo e o card do Trello é atualizado.</p>
+  <button class="btn primary block" data-act="confirmar-refazer" data-id="${esc(id)}">Refazer</button><button class="btn block" data-act="fechar">Cancelar</button>`);
+}
+
+/* ---------------- ações ---------------- */
+let toastT = 0;
+function toast(msg) { let el = $('.toast'); if (!el) { el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); } el.textContent = msg; clearTimeout(toastT); toastT = setTimeout(() => el.remove(), 3200); }
+async function copiar(txt, ok = 'Copiado') { try { await navigator.clipboard.writeText(txt); toast(ok); } catch (_) { const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); toast(ok); } catch (e) { toast('Não deu pra copiar'); } ta.remove(); } }
+async function salvarConfig(patch, msg) {
+  const atual = (await lerConfig()) || {};
+  const novo = { ...atual, ...patch };
+  await GH.putJSON('config.json', novo, msg);
+  S.config = novo; render();
+}
+
+document.addEventListener('click', async e => {
+  const tabBtn = e.target.closest('[data-tab]');
+  if (tabBtn) { if (Rec.on) return; S.tab = tabBtn.dataset.tab; S.view = null; LS.set('tab', S.tab); render(); window.scrollTo(0, 0); return; }
+  const open = e.target.closest('[data-open]');
+  if (open) { S.view = { tipo: 'item', id: open.dataset.open }; render(); window.scrollTo(0, 0); return; }
+  const a = e.target.closest('[data-act]');
+  if (!a) return;
+  const act = a.dataset.act;
+  if (act === 'fechar') { if (e.target === a || a.tagName === 'BUTTON') fecharSheet(); return; }
+  try {
+    switch (act) {
+      case 'rec-start': if (!GH.ok()) { toast('Primeiro ligue o app em Ajustes.'); S.tab = 'ajustes'; render(); return; } await Rec.start(); break;
+      case 'rec-send': Rec.stop(true); break;
+      case 'rec-cancel': Rec.stop(false); toast('Gravação descartada'); break;
+      case 'escrever': if (!GH.ok()) { toast('Primeiro ligue o app em Ajustes.'); return; } sheetEscrever(); break;
+      case 'enviar-texto': { const t = $('#tIdeia').value.trim(); if (t.length < 5) { toast('Escreva um pouco mais'); return; } fecharSheet(); await novaIdeia({ texto: t, origem: 'texto' }); break; }
+      case 'voltar': S.view = null; render(); break;
+      case 'sync': toast('Atualizando…'); await sync(true); break;
+      case 'enviar-agora': enviarPendentes(); break;
+      case 'apagar-pend': { const id = a.dataset.id; await DB.del('pendentes', id); S.pend.delete(id); S.view = null; render(); toast('Apagado'); break; }
+      case 'tentar': { const it = S.itens.get(a.dataset.id); if (it) { await reenviar(it); toast('Mandei de novo pro robô'); } break; }
+      case 'refazer': sheetRefazer(a.dataset.id); break;
+      case 'confirmar-refazer': { const it = S.itens.get(a.dataset.id); const ins = $('#tRef').value; fecharSheet(); const nid = await refazer(it, ins); S.view = { tipo: 'item', id: nid }; render(); toast('Refazendo…'); break; }
+      case 'copiar-roteiro': { const it = S.itens.get(a.dataset.id); copiar(it.roteiro_md.replace(/\*\*/g, ''), 'Roteiro copiado'); break; }
+      case 'copiar-card': { const it = S.itens.get(a.dataset.id); const c = it.card_pronto_pra_colar; if (c) copiar(`${c.nome}\n\n${c.descricao}`, 'Card copiado — cole no Trello'); else toast('Sem card pra copiar'); break; }
+      case 'ouvir': { const p = a.dataset.path; toast('Baixando o áudio…'); const raw = await GH.raw(p); if (!raw) { toast('Áudio não encontrado'); return; } const ext = p.split('.').pop(); const url = URL.createObjectURL(new Blob([raw], { type: ext === 'webm' ? 'audio/webm' : ext === 'mp3' ? 'audio/mpeg' : ext === 'ogg' ? 'audio/ogg' : 'audio/mp4' })); const pl = $('#player'); pl.src = url; pl.hidden = false; pl.play().catch(() => {}); break; }
+      case 'salvar-gh': {
+        const repo = $('#fRepo').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, ''); const token = $('#fTok').value.trim();
+        if (!/^[\w.-]+\/[\w.-]+$/.test(repo) || !token) { toast('Preencha o repositório (dono/nome) e a chave'); return; }
+        LS.set('cfg', { repo, token });
+        try { const info = await GH.repoInfo(); if (!info.private) toast('Atenção: esse repositório é PÚBLICO'); else toast('Conectado ✓'); S.sync.erro = ''; await lerConfig(); await sync(); render(); } catch (err) { S.sync.erro = err.message; toast(err.message); render(); }
+        break;
+      }
+      case 'testar': { await GH.putJSON(`inbox/teste-${novoId()}.json`, { app: APP_ID, tipo: 'teste', criado: new Date().toISOString() }, 'Testar ligações'); toast('Teste enviado. Resultado em ~1 min.'); agendarTeste(); break; }
+      case 'copiar-gs': { await lerConfig(); const cod = codigoAppsScript(); copiar(cod, 'Código copiado — cole no Apps Script'); if (!(S.config && S.config.doc_segredo)) salvarConfig({ doc_segredo: segredoDoc() }, 'Segredo do Google Doc').catch(() => {}); break; }
+      case 'salvar-doc': { const u = $('#fDoc').value.trim(); if (!/^https:\/\/script\.google(usercontent)?\.com\/.+/.test(u)) { toast('Cole a URL que termina em /exec'); return; } await salvarConfig({ doc_url: u, doc_segredo: segredoDoc() }, 'Ligar Google Doc'); toast('Salvo. Toque em Testar agora.'); break; }
+      case 'salvar-pref': await salvarConfig({ meses_referencia: +$('#fMeses').value, qtd_referencias: +$('#fQtd').value, segundos_hook: +$('#fSeg').value, data_livre: $('#fLivre').checked }, 'Preferências do roteirista'); toast('Preferências salvas'); break;
+      case 'notif': { if (!('Notification' in window)) { toast('No iPhone: instale o app na Tela de Início primeiro'); return; } const p = await Notification.requestPermission(); toast(p === 'granted' ? 'Aviso ligado (com o app aberto ou em segundo plano)' : 'Aviso não liberado'); render(); break; }
+      case 'update': await checarVersao(true); break;
+    }
+  } catch (err) { toast(err.message || 'Erro'); }
+});
+document.addEventListener('change', async e => {
+  if (e.target.id !== 'fileIn') return;
+  const f = e.target.files && e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  if (!GH.ok()) { toast('Primeiro ligue o app em Ajustes.'); return; }
+  if (f.size > 45 * 1024 * 1024) { toast('Arquivo grande demais (máx. 45 MB). Mande o link do vídeo por texto.'); return; }
+  await novaIdeia({ blob: f, mime: f.type, origem: 'arquivo', nomeArquivo: f.name });
+});
+let testeT = 0;
+function agendarTeste(n = 0) { clearTimeout(testeT); if (n > 16) return; testeT = setTimeout(async () => { const antes = LS.get('testeSha'); await sync(); if (LS.get('testeSha') === antes) agendarTeste(n + 1); else toast('Teste das ligações chegou'); }, 10000); }
+
+/* ---------------- atualização automática ---------------- */
+function isNewer(a, b) { const pa = String(a).split('.').map(Number), pb = String(b).split('.').map(Number); for (let i = 0; i < Math.max(pa.length, pb.length); i++) { const x = pa[i] || 0, y = pb[i] || 0; if (x !== y) return x > y; } return false; }
+async function checarVersao(manual) {
+  try {
+    const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }); if (!r.ok) throw new Error('http ' + r.status);
+    const j = await r.json();
+    if (isNewer(j.version, APP_VERSION)) { if (Rec.on) return; toast(`Atualizando pra versão ${j.version}…`); await atualizarAgora(); }
+    else if (manual) toast(`Você já está na versão mais nova (${APP_VERSION})`);
+  } catch (e) { if (manual) toast('Sem internet pra procurar atualização'); }
+}
+async function atualizarAgora() {
+  try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) { try { await reg.update(); } catch (_) {} if (reg.waiting) reg.waiting.postMessage('skip'); } } if (window.caches) { for (const k of await caches.keys()) await caches.delete(k); } } catch (_) {}
+  setTimeout(() => location.reload(), 400);
+}
+
+/* ---------------- início ---------------- */
+async function iniciar() {
+  try { for (const x of await DB.all('saidas')) S.itens.set(x.item.id, x.item); for (const p of await DB.all('pendentes')) S.pend.set(p.id, p); } catch (_) {}
+  S.teste = LS.get('teste', null);
+  render();
+  if (GH.ok() && !PREVIEW) { lerConfig().then(() => render(true)); sync(); }
+  if (!PREVIEW) { checarVersao(false); setInterval(() => checarVersao(false), 30 * 60 * 1000); }
+}
+window.addEventListener('online', () => { S.online = true; enviarPendentes(); sync(); });
+window.addEventListener('offline', () => { S.online = false; render(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); else agendar(); });
+if (!PREVIEW && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) navigator.serviceWorker.register('sw.js').catch(() => {});
+iniciar();
+</script>
+</body>
+</html>
